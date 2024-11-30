@@ -25,7 +25,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests( requests ->
                 requests.requestMatchers("/members/**").authenticated()
-                        .requestMatchers("/login/**","/join").permitAll());
+                        .requestMatchers("/login", "/join", "/invalidSession").permitAll());
 
         http.formLogin(Customizer.withDefaults());
         http.httpBasic(Customizer.withDefaults());
