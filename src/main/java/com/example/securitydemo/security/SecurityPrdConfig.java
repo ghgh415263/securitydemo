@@ -17,6 +17,8 @@ public class SecurityPrdConfig {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
+        http.sessionManagement(smc -> smc.invalidSessionUrl("/invalidSession").maximumSessions(1).maxSessionsPreventsLogin(true));
+
         http.requiresChannel(channelRequestMatcherRegistry -> channelRequestMatcherRegistry.anyRequest().requiresSecure());
 
         http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
@@ -25,8 +27,8 @@ public class SecurityPrdConfig {
                 requests.requestMatchers("/members/**").authenticated()
                         .requestMatchers("/login","/join").permitAll());
 
-        http.formLogin(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults());
+        http.formLogin(Customizer.withDefaults());
+        http.httpBasic(Customizer.withDefaults());
 
         return http.build();
     }

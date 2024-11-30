@@ -17,14 +17,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
+        http.sessionManagement(smc -> smc.invalidSessionUrl("/invalidSession").maximumSessions(1).maxSessionsPreventsLogin(true));
+
+        http.requiresChannel(requestMatcherRegistry -> requestMatcherRegistry.anyRequest().requiresInsecure());
+
         http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
 
         http.authorizeHttpRequests( requests ->
                 requests.requestMatchers("/members/**").authenticated()
-                        .requestMatchers("/login","/join").permitAll());
+                        .requestMatchers("/login/**","/join").permitAll());
 
-        http.formLogin(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults());
+        http.formLogin(Customizer.withDefaults());
+        http.httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
