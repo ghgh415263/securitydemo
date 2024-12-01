@@ -17,7 +17,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
-        http.sessionManagement(smc -> smc.invalidSessionUrl("/invalidSession").maximumSessions(1).maxSessionsPreventsLogin(true));
+        http.sessionManagement(smc -> smc.invalidSessionUrl("/login").maximumSessions(1).maxSessionsPreventsLogin(true));
 
         http.requiresChannel(requestMatcherRegistry -> requestMatcherRegistry.anyRequest().requiresInsecure());
 
@@ -25,9 +25,9 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests( requests ->
                 requests.requestMatchers("/members/**").authenticated()
-                        .requestMatchers("/login", "/join", "/invalidSession").permitAll());
+                        .requestMatchers("/login/**", "/join", "/invalidSession", "/loginSuccess").permitAll());
 
-        http.formLogin(Customizer.withDefaults());
+        http.formLogin(formLoginConfigurer -> formLoginConfigurer.loginPage("/login").defaultSuccessUrl("/loginSuccess").failureUrl("/login?error=true"));
         http.httpBasic(Customizer.withDefaults());
 
         return http.build();

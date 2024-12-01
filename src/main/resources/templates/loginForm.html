@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/noNavbarLayout :: layout(~{::title}, ~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+</head>
+<body>
+<section>
+    <div class="container">
+        <div class="py-5 text-center">
+            <h2>로그인</h2>
+        </div>
+        <div>
+            <li class="alert alert-danger" role="alert" th:if="${!#strings.isEmpty(errorMsg)}" th:text="${errorMsg}" />
+            <form method="post">
+                <div class="mb-3">
+                    <label for="username" class="form-label">username :</label>
+                    <input type="text" name="username" id="username" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">password :</label>
+                    <input type="password" name="password" id="password" class="form-control">
+                </div>
+                <div class="py-3">
+                    <button type="submit" class="btn btn-outline-primary">로그인</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>
