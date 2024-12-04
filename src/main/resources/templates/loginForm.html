@@ -12,6 +12,7 @@
         <div>
             <li class="alert alert-danger" role="alert" th:if="${!#strings.isEmpty(errorMsg)}" th:text="${errorMsg}" />
             <form method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <div class="mb-3">
                     <label for="username" class="form-label">username :</label>
                     <input type="text" name="username" id="username" class="form-control">

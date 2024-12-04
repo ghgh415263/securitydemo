@@ -9,6 +9,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Profile("!prd")
 @Configuration
@@ -17,17 +20,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
-        http.sessionManagement(smc -> smc.invalidSessionUrl("/login").maximumSessions(1).maxSessionsPreventsLogin(true));
+        http.sessionManagement(smc -> smc.invalidSessionUrl("/invalidSession").maximumSessions(1).maxSessionsPreventsLogin(true));
 
         http.requiresChannel(requestMatcherRegistry -> requestMatcherRegistry.anyRequest().requiresInsecure());
 
-        http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
+        http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                .addFilterAfter(new CsrfCookieFilter(), UsernamePasswordAuthenticationFilter.class);  //모든 곳에 cqrs token 발행하게 + 쿠키를 csrf 저장소로 쓰기위한 코드
 
         http.authorizeHttpRequests( requests ->
                 requests.requestMatchers("/members/**").authenticated()
-                        .requestMatchers("/login/**", "/join", "/invalidSession", "/loginSuccess").permitAll());
+                        .requestMatchers("/login/**", "/join", "/invalidSession").permitAll());
 
-        http.formLogin(formLoginConfigurer -> formLoginConfigurer.loginPage("/login").defaultSuccessUrl("/loginSuccess").failureUrl("/login?error=true"));
+        http.formLogin(formLoginConfigurer -> formLoginConfigurer.loginPage("/login").defaultSuccessUrl("/members").failureUrl("/login?error=true"));
         http.httpBasic(Customizer.withDefaults());
 
         return http.build();
