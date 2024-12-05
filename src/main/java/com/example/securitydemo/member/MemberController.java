@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -17,10 +16,11 @@ public class MemberController {
 
     private final MemberRepository memberRepository;
 
-    @PostMapping("/join")
+    @GetMapping("/join")
     public String createMember(){
 
-        Member member = Member.builder().username("user").password(passwordEncoder.encode("12345")).role("admin").build();
+        Member member = Member.builder().username("user").password(passwordEncoder.encode("12345")).build();
+        member.addMemberRole(RoleType.USER);
 
         memberRepository.save(member);
 
