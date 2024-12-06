@@ -30,7 +30,8 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests( requests ->
                 requests.requestMatchers("/members/**").authenticated()
-                        .requestMatchers("/login/**", "/join", "/invalidSession").permitAll());
+                        .requestMatchers("/login/**", "/join", "/invalidSession").permitAll()
+                        .requestMatchers("/admin").hasAuthority("USER"));
 
         http.formLogin(formLoginConfigurer -> formLoginConfigurer.loginPage("/login").defaultSuccessUrl("/members").failureUrl("/login?error=true"));
         http.httpBasic(Customizer.withDefaults());

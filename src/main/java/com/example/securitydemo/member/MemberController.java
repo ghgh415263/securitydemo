@@ -32,4 +32,9 @@ public class MemberController {
         log.info("");
         return "MemberInfo";
     }
+
+    @GetMapping("/admin")
+    public String getAdmin(){
+        return "admin";
+    }
 }
