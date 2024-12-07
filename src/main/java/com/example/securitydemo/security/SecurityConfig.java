@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .addFilterAfter(new CsrfCookieFilter(), UsernamePasswordAuthenticationFilter.class);  //모든 곳에 cqrs token 발행하게 + 쿠키를 csrf 저장소로 쓰기위한 코드
 
         http.authorizeHttpRequests( requests ->
-                requests.requestMatchers("/members/**").authenticated()
+                requests.requestMatchers("/members/**", "/method").authenticated()
                         .requestMatchers("/login/**", "/join", "/invalidSession").permitAll()
                         .requestMatchers("/admin").hasAuthority("USER"));
 
