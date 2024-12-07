@@ -54,8 +54,10 @@
 <h1>Exception Handling</h1>
 
 1. AuthenticationEntryPoint 구현체가 AuthenticationException이 발생하면 호출된다.
-   - FormLogin, http basic 일때, 기본으로 등록되는 AuthenticationEntryPoint 구현체가 호출된다.
+   - http basic 일때, 기본으로 등록되는 AuthenticationEntryPoint 구현체가 호출된다.
    - 만약 커스텀 AuthenticationEntryPoint가 등록되면 커스텀한 구현체가 호출된다.
 
 2. AccessDeniedHandler
    - 구현체 등록하면 인가 실패시 호출된다.
+  
+3. ExceptionTranslationFilter에서 등록된 구현체를 실행시킨다.
