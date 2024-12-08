@@ -61,3 +61,44 @@
    - 구현체 등록하면 인가 실패시 호출된다.
   
 3. ExceptionTranslationFilter에서 등록된 구현체를 실행시킨다.
+<br>
+
+<h1>Session Management</h1>
+
+1. 세션 고정 공격 방어
+   - 로그인시에 새로운 세션을 발급하게 함 (newSession 정책)
+   - changeSessionId, migrateSession 정책도 있음
+
+2. 인증시 이벤트 생성
+   - DefaultAuthenticationEventPublisher가 인증이 실패하거나 성공했을때, 이벤트를 발행
+<br>
+
+<h1> ModelAndView에서 인증 </h1>
+
+1. login 설정들 설정가능
+   - 로그인 페이지 url
+   - usernameParameter 명, passwordParameter명
+   - 성공시 url, 실패시 url를 다 설정가능
+
+2. logout 관련된 설정들도 다 설정가능
+   - 로그아웃 성공시 url
+   - http세션 비활성화
+   - Authentication 비우기
+   - 쿠키 지우기
+
+3. 타임리프와의 통합도 가능 (통합용 디팬던시 추가해야함)
+   - isAuthenticationed() 같은 것들을 타임리프에서 사용가능
+<br>
+
+<h1>SecurityContext</h1>
+
+1. Authentication 객체가 저장되는 보관소
+
+2. 기본으로는 ThreadLocal에 저장된다. 물론, 다른 전략들도 있다.
+   - 비동기에서도 사용가능한 MODE_INHERITABLETHREADLOCAL
+   - 모든 쓰레드에서 접근가능한 MODE_GLOBAL
+
+3. SecurityContextHolder는 SecurityContext를 쉽게 접근하기 위한 헬퍼 클래스이다.
+   - Bean들은 SecurityContextHolder에서 SecurityContext를 가져온다.
+   - controller에서 argument로 Authentication을 가져온다.
+
