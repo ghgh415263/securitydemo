@@ -101,4 +101,90 @@
 3. SecurityContextHolder는 SecurityContext를 쉽게 접근하기 위한 헬퍼 클래스이다.
    - Bean들은 SecurityContextHolder에서 SecurityContext를 가져온다.
    - controller에서 argument로 Authentication을 가져온다.
+<br>
 
+<h1>CORS & CSRF</h1>
+
+1. CORS (CROSS-ORIGIN RESOURCE SHARING)
+   - 브라우저의 기본 기능. 클라이언트에서 HTTP요청의 헤더에 Origin을 담아 전달 -> 서버는 응답헤더에 Access-Control-Allow-Origin을 담아 클라이언트로 전달 -> 클라이언트에서 비교
+   - 다른 오리진으로 API콜하면 해당 콜을 블락시켜버림
+   - 같은 오리진은 scheme, domain, port가 같아야한다.
+   - 서버의 cors 설정을 통해서 다른 오리진의 요청받을 수 있게 한다.
+
+2. CSRF (CROSS-SITE REQUEST FORGERY)
+   - A사이트에서 로그인한 사용자가 악성사이트에 들어감 -> 악성사이트 내의 폼으로 이메일 변경 같은 요청보내면 현 도메인에 상관없이 현 쿠키를 보내버린다. -> A사이트의 세션용쿠키가 보내지면서 인증이되어버린다.
+   - 해커는 굳이 쿠키를 탈취할 필요도 없음
+   - CSRF 토큰을 추가로 발급하는 것으로 설정하여, 공격을 막는다.
+   - CSRF 토큰은 세션이나 쿠키에 저장한다. 현재는 주로 쿠키에 사용된다.
+   - 요청시에 CSRF 토큰을 헤더 같은 곳에 담아서 전달하면 토큰저장소에서 CSRF 토큰을 가져와서 두개를 비교한다. 만약 다르면, 403 응답을 보낸다.
+   - 만약 타임리프를 사용한다면 input tag로 csrf 토큰을 프론트로 보낸다.
+<br>
+
+<h1>AUTHORITY & ROLE</h1>
+
+1. AUTHORITY
+   - 특정 액션마다의 권한을 말한다. GET ACCOUNT 이런 것들..
+   - 시큐리티 설정에서 URL마다 설정가능하다.
+   - 실패시 권한거부이벤트 발생
+
+2. ROLE
+   - 특정 액션들의 모음에 대한 권한을 말한다. USER, ADMIN 같은 것들..
+   - 역시 설정가능하다.
+   - 보통 prefix가 붙는다. (ROLE_). prefix는 커스텀 가능하다.
+   - 실패시 권한거부이벤트 발생
+<br>
+
+<h1>Filter</h1>
+
+1. 필터는 주로 input validation, logging, 암호화, tracing 등에 사용한다.
+
+2. @EnableWebSecurity(debug=true) 시큐리티 필터들을 모두 로그로 확인가능
+
+3. FilterChain이란 필터의 collection을 말한다.
+
+4. 시큐리티 필터는 addFilterBefore, after, at 등으로 추가 가능하다.
+   - at의 경우에는 특정 필터를 오버라이드하는 게 아니라 같은 위치로 들어간다고 보면된다. 같은 위치에 있는 필터들은 호출 순서를 예측할 수 없다
+
+6. GenericFilterBean
+   - Filter를 확장하여 Spring에서 제공하는 filter. 기존 Filter에서 얻어올 수 없는 정보였던 Spring의 설정 정보를 가져올 수 있게 확장된 추상 클래스
+
+7. OncePerRequestFilter
+   - GenericFilterBean를 확장한 filter. 한 요청 내에서 한번만 호출되는 것을 보장하게 만듬.
+<br>
+
+<h1>JWT 토큰</h1>
+
+1. Opaque 토큰 vs Jwt 토큰
+   - Opaque 토큰은 랜덤 string으로 아무런 정보를 담고 있지 않다. 만약 토큰을 validate할려면 발급한 서버에 요청을 보내야한다.
+   - Jwt 토큰은 정보를 담고 있다. stateless하므로 발급한 서버에 요청을 안보내도 validate 가능.
+
+2. 토큰의 장점
+   - 만료시간 설정 가능
+   - 정보를 지닐 수 있음. (jwt같은 토큰이라면)
+   - 다양한 플랫폼에서 활용가능. 웹, 모바일 등등
+   - 다양한 도메인, 서비스에서 재활용가능. sso 같은 것들..
+   - 토큰으로 인증하면, 모든 회원 정보를 노출하지도 않음.
+
+3. JWT 특징
+   - 인증/인가에 사용가능
+   - STATELESS하다
+   - 형태는 해더.페이로드.시그니처(OPTIONAL)
+   - 해더와 페이로드는 BASE64로 인코딩
+   - 시그니처는 BASE64(해더).BASE64(페이로드)를 시크릿키로 암호화한다.
+   - 인증시에는 PUBLIC KEY로 복호화해서 인증한다.
+
+4. JWT 토큰 적용
+   - 토큰으로 인증하는 AuthenticationProvider를 구현한다.
+<br>
+
+<h1>메서드 수준 시큐리티</h1>
+
+1. 스프링 AOP로 구현되어 있음
+   - @PreAuthorize 호출전에 권한 검사
+   - @PostAuthorize 호출후에 리턴값에 관련된 권한 검사 ("returnObject.owner == authentication.name")
+   - @PreFilter 호출전에 파라미터 필터링 -> 걸러냄
+   - @PostFilter
+
+2. @EnableMethodSecurity를 해줘야함.
+
+3. 같은 어노테이션은 여러개 적용 불가능.
