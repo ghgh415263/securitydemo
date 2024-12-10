@@ -118,6 +118,7 @@
    - CSRF 토큰은 세션이나 쿠키에 저장한다. 현재는 주로 쿠키에 사용된다.
    - 요청시에 CSRF 토큰을 헤더 같은 곳에 담아서 전달하면 토큰저장소에서 CSRF 토큰을 가져와서 두개를 비교한다. 만약 다르면, 403 응답을 보낸다.
    - 만약 타임리프를 사용한다면 input tag로 csrf 토큰을 프론트로 보낸다.
+   - https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html 참고
 <br>
 
 <h1>AUTHORITY & ROLE</h1>
